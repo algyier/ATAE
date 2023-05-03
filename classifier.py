@@ -2,10 +2,10 @@ import cv2
 import sqlite3
 import database_operations as do
 
-class classifier():
+class classifier:
 
     def __init__(self, img_path):
-        
+
         self.__db = do('big_boy.sqlite')
         self.__img_path = img_path
 

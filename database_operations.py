@@ -30,3 +30,4 @@ class database_operations:
         c = self.__db.cursor()
         c.execute(statement)
         return c.fetchall()
+    #das ist ein Kommentar
