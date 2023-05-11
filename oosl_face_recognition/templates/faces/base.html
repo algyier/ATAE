@@ -1,0 +1,22 @@
+{% load bootstrap4 %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ view.page_title }}</title>
+
+    {% bootstrap_css %}
+    {% bootstrap_javascript jquery='full' %}
+
+</head>
+<body>
+{% bootstrap_messages %}
+<h2>{{ page_title }}</h2>
+
+{% block content %}
+    <p>Dummy Text</p>
+{% endblock %}
+
+</body>
+</html>
