@@ -11,11 +11,24 @@
 
 </head>
 <body>
-{% bootstrap_messages %}
+
+{% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                {{ message }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
 <h2>{{ page_title }}</h2>
 
 {% block content %}
-    <p>Dummy Text</p>
+
+
+
 {% endblock %}
 
 </body>

@@ -3,12 +3,12 @@ from django.db import models
 
 # Create your models here.
 class Photographer(models.Model):
-    username = models.CharField(max_length=128)
-    key = models.CharField(max_length=128)
+    username = models.CharField(max_length=150)
+    password = models.CharField(max_length=128)
 
 
 class Picture(models.Model):
-    photographer = models.ForeignKey(Photographer, on_delete=models.SET_NULL, null=True)
+    photographer = models.CharField(max_length=150)
     file = models.ImageField(upload_to='files/pictures')
 
 

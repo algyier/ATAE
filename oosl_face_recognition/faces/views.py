@@ -1,5 +1,7 @@
 from django.shortcuts import render
+from django.contrib.auth import authenticate, login, logout
 from django.views.generic import DeleteView
+from django.contrib import messages
 
 from faces.models import *
 from django.http import HttpResponseRedirect
@@ -12,3 +14,11 @@ from django.contrib import messages
 
 def show_home_screen(request, arg=None):
     return render(request, 'faces/home.html')
+
+
+def login_photgrapher(request):
+    return render(request, 'authenticate/login.html', {})
+
+
+def upload_photos(request):
+    return render(request, '../templates/faces/upload_photos.html', {'username': request.user.first_name})
