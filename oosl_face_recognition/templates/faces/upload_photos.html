@@ -3,19 +3,21 @@
 
 {% block content %}
 
-
     <div
         class="container"
         style="text-align: center"
     >
-        <h2>Hi {{ username }}! Upload your photos</h2>
-        <div
-            class="button_container"
-            style="width: 50%; margin-left: auto; margin-right: auto"
-        >
-            <a href="{% url 'logout' %}" class="btn btn-outline-primary btn-lg btn-block">Logout</a>
-        </div>
+        <h2>Hi {{ user.first_name }}! Upload your photos</h2>
+
+        <form action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
 
     </div>
+
+
 
 {% endblock %}

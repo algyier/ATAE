@@ -17,13 +17,23 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from faces.views import *
+from django.conf import settings
+from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('home/', show_home_screen, name='home'),
 
+    # Verknüpgung zu der urls.py von members
+    # damit ist es übersichtlicher und das Authentifizierungssystem steht nur dort zur Verfügung
     path('photographers/', include('django.contrib.auth.urls')),
     path('photographers/', include('members.urls')),
     path('photographers/upload_photos/', upload_photos,  name='upload_photos'),
+    path('photographers/photographer_view/', navigate_to_photographer_view, name='photographer_view'),
 
     path('', show_home_screen, name='home'),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# für statische Dateien wie Bilder.
+# Media_root = da wo Bilder gespeichert werden
+# Media_url = die url die man angeben muss
+# -> beides in den settings.py definiert
+

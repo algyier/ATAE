@@ -1,0 +1,44 @@
+{% extends 'faces/base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+
+    {# wird nur angezeigt wenn der user angemeldet ist #}
+    {% if user.is_authenticated %}
+    <div
+        class="container"
+        style="text-align: center"
+    >
+        <h2>Hello {{ user.first_name }}!</h2>
+
+        <div
+            class="button_container"
+            style="width: 50%; margin-left: auto; margin-right: auto"
+        >
+            <a href="{% url 'upload_photos' %}" class="btn btn-primary btn-lg btn-block">Upload Photos</a>
+            <a href="{% url 'logout' %}" class="btn btn-outline-primary btn-lg btn-block">Logout</a>
+        </div>
+
+     </div>
+
+    {% else %}
+
+    <div
+        class="container"
+        style="text-align: center"
+    >
+        <h2>You Are Not Logged In.</h2>
+
+        <div
+            class="button_container"
+            style="width: 50%; margin-left: auto; margin-right: auto"
+        >
+            <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg btn-block">Login</a>
+        </div>
+
+     </div>
+
+    {% endif %}
+
+
+{% endblock %}
