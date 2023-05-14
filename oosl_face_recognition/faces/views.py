@@ -103,8 +103,8 @@ def recognize_faces(picture):
         # Bild auf die Region mit einem Gesicht zuschneiden (Achtung: img_cropped ist jetzt ein np.array und kein file mehr!)
         img_cropped = img[y:(y + height), x:(x + width)]
 
-        # initialisieren eines neuen Gesichts
-        face = Face()
+        # hier müssen jetzt faces verglichen werden
+        # if face_in_db(img_cropped):
 
         # Namen für neuen file aus dem namen des Ursprungsbildes und der Nummer des Gesichts
         file_name = str(picture.file).split('/')[-1].split('.')[0]+'_face_'+str(i)+'.png'
@@ -118,6 +118,9 @@ def recognize_faces(picture):
         # Bild am absoluten Pfad lokal speichern
         cv2.imwrite(path_absolute, img_cropped)
 
+        # initialisieren eines neuen Gesichts
+        face = Face()
+
         # Attribute des Gesichts speichern
         face.file = path
         face.save()
@@ -125,3 +128,7 @@ def recognize_faces(picture):
 
         i += 1
 
+
+def face_in_db(face):
+    # Alle Faces aus db holen und einzeln mit Bild vergleichen
+    pass
