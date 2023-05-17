@@ -39,7 +39,7 @@ def navigate_to_photographer_view(request):
     return render(request, '../templates/faces/photographer_view.html')
 
 
-def upload_photos(request):
+def upload_photo(request):
     """
     Diese Funktion arbeitet mit der in request.FILES übergebenen Bilder von einer PictureForm (siehe forms.py).
     Jeder übergebene file wird als Picture (siehe models.py) abgespeichert.
@@ -52,6 +52,35 @@ def upload_photos(request):
     # Wenn Formular abgeschickt wird
     if request.method == 'POST':
         form = PictureForm(request.POST, request.FILES)
+        if form.is_valid():
+            # alle Pfade der Bilder in der request auslesen
+            # was immer mit dem Bild passiert
+
+            messages.success(request, 'Pictures Uploaded')
+            return HttpResponseRedirect(reverse_lazy('home'))
+        else:
+            messages.error(request, 'Data Incorrect.')
+    # Wenn Seite geladen wird
+    else:
+        # initialiseren des Formulars mit dem Vornamen des users als photograph (siehe admin/users)
+        # ich glaube das braucht man gar nicht, aber lass mal lieber
+        form = PictureForm()
+        return render(request, '../templates/faces/upload_photo.html', {'form': form})
+
+
+def upload_photos(request):
+    """
+    Diese Funktion arbeitet mit der in request.FILES übergebenen Bilder von einer PictureForm (siehe forms.py).
+    Jeder übergebene file wird als Picture (siehe models.py) abgespeichert.
+    (Der Pfad des Bilds in der DB, das Bild selbst lokal in media/images/faces).
+    Danach wird das Picture an die Methode recognize_faces() übergeben um die Gesichter aus dem Bild auszulesen
+    :param request:
+    :return: render():
+    """
+
+    # Wenn Formular abgeschickt wird
+    if request.method == 'POST':
+        form = PictureForm(request.POST, request.FILES, multiple=True)
         if form.is_valid():
             # alle Pfade der Bilder in der request auslesen
             files = request.FILES.getlist('file')
@@ -131,4 +160,8 @@ def recognize_faces(picture):
 
 def face_in_db(face):
     # Alle Faces aus db holen und einzeln mit Bild vergleichen
+    pass
+
+
+def recognize_user():
     pass

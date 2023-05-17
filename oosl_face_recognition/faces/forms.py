@@ -5,7 +5,6 @@ from django.core.files.base import ContentFile
 from django.core.files.images import ImageFile
 
 
-
 class PictureForm(ModelForm):
     class Meta:
         model = Picture  # = zu welchem Model das Formular gebaut werden soll
