@@ -51,7 +51,7 @@ def upload_photos(request):
 
     # Wenn Formular abgeschickt wird
     if request.method == 'POST':
-        form = PictureForm(request.POST, request.FILES)
+        form = ManyPictureForm(request.POST, request.FILES)
         if form.is_valid():
             # alle Pfade der Bilder in der request auslesen
             files = request.FILES.getlist('file')
@@ -71,7 +71,7 @@ def upload_photos(request):
     else:
         # initialiseren des Formulars mit dem Vornamen des users als photograph (siehe admin/users)
         # ich glaube das braucht man gar nicht, aber lass mal lieber
-        form = PictureForm(initial={'photographer': request.user.username})
+        form = ManyPictureForm(initial={'photographer': request.user.username})
         return render(request, '../templates/faces/upload_photos.html', {'form': form})
 
 
