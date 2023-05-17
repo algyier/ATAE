@@ -5,9 +5,17 @@ from django.core.files.base import ContentFile
 from django.core.files.images import ImageFile
 
 
+
+class ManyPictureForm(Form):
+    class Meta:
+        fields = ('file',)
+
+    file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+
+
 class PictureForm(ModelForm):
     class Meta:
-        model = Picture  # = zu welchem Model das Formular gebaut werden soll
+        model = Picture
         fields = ('file',)
 
     file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
