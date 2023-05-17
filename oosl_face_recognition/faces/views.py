@@ -80,7 +80,7 @@ def upload_photos(request):
 
     # Wenn Formular abgeschickt wird
     if request.method == 'POST':
-        form = PictureForm(request.POST, request.FILES, multiple=True)
+        form = PictureForm(request.POST, request.FILES)
         if form.is_valid():
             # alle Pfade der Bilder in der request auslesen
             files = request.FILES.getlist('file')

@@ -5,8 +5,8 @@ from django.core.files.base import ContentFile
 from django.core.files.images import ImageFile
 
 
-
 class ManyPictureForm(Form):
+
     class Meta:
         fields = ('file',)
 
