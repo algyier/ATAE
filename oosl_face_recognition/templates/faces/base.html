@@ -2,25 +2,25 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ view.page_title }}</title>
+        <head>
+            <meta charset="UTF-8">
+            <title>{{ view.page_title }}</title>
 
-    {% bootstrap_css %}
-    {% bootstrap_javascript jquery='full' %}
+            {% bootstrap_css %}
+            {% bootstrap_javascript jquery='full' %}
 
-</head>
-<body>
+        </head>
+        <body>
 
-{% bootstrap_messages %}
+        {% bootstrap_messages %}
 
-<h2>{{ page_title }}</h2>
+        <h2>{{ page_title }}</h2>
 
-{% block content %}
+        {% block content %}
 
 
 
-{% endblock %}
+        {% endblock %}
 
-</body>
+    </body>
 </html>

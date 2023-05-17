@@ -30,6 +30,9 @@ urlpatterns = [
     path('photographers/upload_photos/', upload_photos,  name='upload_photos'),
     path('photographers/photographer_view/', navigate_to_photographer_view, name='photographer_view'),
 
+
+    path('upload_photo/', upload_photo,  name='upload_photo'),
+
     path('', show_home_screen, name='home'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 # für statische Dateien wie Bilder.
