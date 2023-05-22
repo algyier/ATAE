@@ -10,7 +10,7 @@ class ManyPictureForm(Form):
     class Meta:
         fields = ('file',)
 
-    file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    file = forms.ImageField(widget=forms.ClearableFileInput())
 
 
 class PictureForm(ModelForm):
@@ -18,4 +18,4 @@ class PictureForm(ModelForm):
         model = Picture
         fields = ('file',)
 
-    file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    file = forms.ImageField(widget=forms.ClearableFileInput())

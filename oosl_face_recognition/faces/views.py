@@ -80,28 +80,23 @@ def upload_photos(request):
 
     # Wenn Formular abgeschickt wird
     if request.method == 'POST':
-        form = PictureForm(request.POST, request.FILES)
-        if form.is_valid():
-            # alle Pfade der Bilder in der request auslesen
-            files = request.FILES.getlist('file')
+        files = request.FILES.getlist('images')
 
-            for file in files:
-                # neues Bild mit daten vom User und der request initialisieren und abspeichern
-                picture = Picture(photographer=request.user.first_name, file=file)
-                picture.save()
+        for file in files:
+            # neues Bild mit daten vom User und der request initialisieren und abspeichern
+            picture = Picture(photographer=request.user.first_name, file=file)
+            picture.save()
 
-                # Gesichter aus dem Bild extrahieren
-                recognize_faces(picture)
-            messages.success(request, 'Pictures Uploaded')
-            return HttpResponseRedirect(reverse_lazy('home'))
-        else:
-            messages.error(request, 'Data Incorrect.')
+            # Gesichter aus dem Bild extrahieren
+            recognize_faces(picture)
+        messages.success(request, 'Pictures Uploaded')
+        return HttpResponseRedirect(reverse_lazy('home'))
+
     # Wenn Seite geladen wird
     else:
         # initialiseren des Formulars mit dem Vornamen des users als photograph (siehe admin/users)
         # ich glaube das braucht man gar nicht, aber lass mal lieber
-        form = ManyPictureForm(initial={'photographer': request.user.username})
-        return render(request, '../templates/faces/upload_photos.html', {'form': form})
+        return render(request, '../templates/faces/upload_photos.html', {})
 
 
 def recognize_faces(picture):
