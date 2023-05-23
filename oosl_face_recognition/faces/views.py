@@ -1,3 +1,5 @@
+import tempfile
+
 from django.shortcuts import render
 from faces.forms import *
 from django.contrib.auth import authenticate, login, logout
@@ -13,6 +15,7 @@ import pdb
 import cv2
 import os
 from django.conf import settings
+import face_recognition
 from PIL import Image
 # Create your views here.
 
@@ -119,44 +122,80 @@ def recognize_faces(picture):
     img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = cascade.detectMultiScale(img_grey)
 
-    # das hier war nur zum debuggen, ich lass es mal hier falls man es nochmal braucht xd
+    # das hier war nur zum debuggen, ich lass es mal hier, falls man es nochmal braucht xd
     # pdb.set_trace()
     # breakpoint()
 
     for x, y, width, height in faces:
-        # Bild auf die Region mit einem Gesicht zuschneiden (Achtung: img_cropped ist jetzt ein np.array und kein file mehr!)
+        # Bild auf die Region mit einem Gesicht zuschneiden
+        # (Achtung: img_cropped ist jetzt ein np.array und kein file mehr!)
         img_cropped = img[y:(y + height), x:(x + width)]
 
+        # Temporäre Datei erstellen
+        with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as temp_file:
+            # Temporäres Bild speichern
+            cv2.imwrite(temp_file.name, img_cropped)
+
+            face_known = face_in_db(temp_file.name)
+
         # hier müssen jetzt faces verglichen werden
-        # if face_in_db(img_cropped):
+        if not face_known:
 
-        # Namen für neuen file aus dem namen des Ursprungsbildes und der Nummer des Gesichts
-        file_name = str(picture.file).split('/')[-1].split('.')[0]+'_face_'+str(i)+'.png'
+            # Namen für neuen file aus dem namen des Ursprungsbildes und der Nummer des Gesichts
+            file_name = str(picture.file).split('/')[-1].split('.')[0]+'_face_'+str(i)+'.png'
 
-        # absoluter path um die Datei lokal an die richtige Stelle zu schreiben
-        path_absolute = os.path.join(settings.MEDIA_ROOT, 'images/faces', file_name)
+            # absoluter path um die Datei lokal an die richtige Stelle zu schreiben
+            path_absolute = os.path.join(settings.MEDIA_ROOT, 'images/faces', file_name)
 
-        # einfacher path, der in der db gespeichert wird, mit dem man den file wieder finden kann
-        path = f'images/faces/{file_name}'
+            # einfacher path, der in der db gespeichert wird, mit dem man den file wieder finden kann
+            path = f'images/faces/{file_name}'
 
-        # Bild am absoluten Pfad lokal speichern
-        cv2.imwrite(path_absolute, img_cropped)
+            # Bild am absoluten Pfad lokal speichern
+            cv2.imwrite(path_absolute, img_cropped)
 
-        # initialisieren eines neuen Gesichts
-        face = Face()
+            # initialisieren eines neuen Gesichts
+            face = Face()
 
-        # Attribute des Gesichts speichern
-        face.file = path
-        face.save()
-        face.pictures.add(picture)
+            # Attribute des Gesichts speichern
+            face.file = path
+            face.save()
+            face.pictures.add(picture)
+
+        else:
+                Face.objects.get(pk=face_known).pictures.add(picture)
 
         i += 1
 
 
-def face_in_db(face):
+def face_in_db(new_face):
     # Alle Faces aus db holen und einzeln mit Bild vergleichen
-    pass
+    faces = Face.objects.all()
+    new_image = face_recognition.load_image_file(new_face)
+    try:
+        new_image_encoding = face_recognition.face_encodings(new_image)[0]
+    except IndexError:
+        return False
+
+    for face in faces:
+        known_image = face_recognition.load_image_file(face.file.path)
+        known_image_encoding = face_recognition.face_encodings(known_image)[0]
+
+        if face_recognition.compare_faces([new_image_encoding], known_image_encoding):
+            return face.pk
+
+    return False
 
 
-def recognize_user():
-    pass
+def recognize_user(face_upload):
+    faces = Face.objects.all()
+    upload_image = face_recognition.load_image_file(face_upload)
+    upload_image_encoding = face_recognition.face_encodings(upload_image)[0]
+
+    for face in faces:
+        known_image = face_recognition.load_image_file(face.file)
+        known_image_encoding = face_recognition.face_encodings(known_image)[0]
+
+        if face_recognition.compare_faces([upload_image_encoding], known_image_encoding):
+            return face.get_field("id")
+
+    return False
