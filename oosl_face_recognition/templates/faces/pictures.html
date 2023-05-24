@@ -1,0 +1,18 @@
+{% extends 'faces/base.html' %}
+
+
+{% block content %}
+
+    <div
+        class="home_container"
+        style="text-align: center"
+    >
+
+    {% for img in images %}
+        <img src="{{ img.file }}" alt="img">
+    {% endfor %}
+
+    </div>
+
+
+{% endblock %}

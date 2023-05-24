@@ -17,6 +17,7 @@ import os
 from django.conf import settings
 import face_recognition
 from PIL import Image
+import numpy as np
 # Create your views here.
 
 
@@ -54,21 +55,25 @@ def upload_photo(request):
 
     # Wenn Formular abgeschickt wird
     if request.method == 'POST':
-        form = ManyPictureForm(request.POST, request.FILES)
-        if form.is_valid():
-            # alle Pfade der Bilder in der request auslesen
-            # was immer mit dem Bild passiert
+        file = request.FILES['image']
 
-            messages.success(request, 'Pictures Uploaded')
+        messages.success(request, 'Pictures Uploaded, this may take a minute')
+
+        face_known = find_rois(file)[0]
+
+        if not face_known:
+            messages.error(request, 'Pictures Uploaded, we have no pictures with this pretty person')
             return HttpResponseRedirect(reverse_lazy('home'))
         else:
-            messages.error(request, 'Data Incorrect.')
+            messages.success(request, 'gone here')
+            faces = Face(pk=face_known).pictures.all()
+            return render(request, '../templates/faces/pictures.html', {'files': faces})
+
     # Wenn Seite geladen wird
     else:
         # initialiseren des Formulars mit dem Vornamen des users als photograph (siehe admin/users)
         # ich glaube das braucht man gar nicht, aber lass mal lieber
-        form = PictureForm()
-        return render(request, '../templates/faces/upload_photo.html', {'form': form})
+        return render(request, '../templates/faces/upload_photo.html', {})
 
 
 def upload_photos(request):
@@ -113,18 +118,56 @@ def recognize_faces(picture):
     # Laufvariable zu Benennung der Datei
     i = 1
 
-    # pfad für die cascade zur Gesichtserkennung
+    face_known, img_cropped = find_rois(picture)
+
+    # hier müssen jetzt faces verglichen werden
+    if not face_known:
+
+        # Namen für neuen file aus dem namen des Ursprungsbildes und der Nummer des Gesichts
+        file_name = str(picture.file).split('/')[-1].split('.')[0]+'_face_'+str(i)+'.png'
+
+        # absoluter path um die Datei lokal an die richtige Stelle zu schreiben
+        path_absolute = os.path.join(settings.MEDIA_ROOT, 'images/faces', file_name)
+
+        # einfacher path, der in der db gespeichert wird, mit dem man den file wieder finden kann
+        path = f'images/faces/{file_name}'
+
+        # Bild am absoluten Pfad lokal speichern
+        cv2.imwrite(path_absolute, img_cropped)
+
+        # initialisieren eines neuen Gesichts
+        face = Face()
+
+        # Attribute des Gesichts speichern
+        face.file = path
+        face.save()
+        face.pictures.add(picture)
+
+    else:
+        Face.objects.get(pk=face_known).pictures.add(picture)
+
+    i += 1
+
+
+def find_rois(picture):
+
+    # pfad für die cascade zur Gesichtserkennung, das könnte man noch auslagern (nicht für jedes Bild)
     haarcascade_path = os.path.join(settings.BASE_DIR, 'faces/haarcascade_frontalface_default.xml')
+    cascade = cv2.CascadeClassifier(haarcascade_path)
 
     # Bild öffnen, in Graustufen konvertieren und die Bereiche mit Gesichtern extrahieren
-    img = cv2.imread(picture.file.path)
-    cascade = cv2.CascadeClassifier(haarcascade_path)
+    try:
+        img = cv2.imread(picture.file.path)
+    except AttributeError:
+        img = Image.open(picture.file)
+        img = np.array(img)
     img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = cascade.detectMultiScale(img_grey)
 
     # das hier war nur zum debuggen, ich lass es mal hier, falls man es nochmal braucht xd
     # pdb.set_trace()
     # breakpoint()
+    # könnte man eig. rausnehmen
 
     for x, y, width, height in faces:
         # Bild auf die Region mit einem Gesicht zuschneiden
@@ -136,35 +179,7 @@ def recognize_faces(picture):
             # Temporäres Bild speichern
             cv2.imwrite(temp_file.name, img_cropped)
 
-            face_known = face_in_db(temp_file.name)
-
-        # hier müssen jetzt faces verglichen werden
-        if not face_known:
-
-            # Namen für neuen file aus dem namen des Ursprungsbildes und der Nummer des Gesichts
-            file_name = str(picture.file).split('/')[-1].split('.')[0]+'_face_'+str(i)+'.png'
-
-            # absoluter path um die Datei lokal an die richtige Stelle zu schreiben
-            path_absolute = os.path.join(settings.MEDIA_ROOT, 'images/faces', file_name)
-
-            # einfacher path, der in der db gespeichert wird, mit dem man den file wieder finden kann
-            path = f'images/faces/{file_name}'
-
-            # Bild am absoluten Pfad lokal speichern
-            cv2.imwrite(path_absolute, img_cropped)
-
-            # initialisieren eines neuen Gesichts
-            face = Face()
-
-            # Attribute des Gesichts speichern
-            face.file = path
-            face.save()
-            face.pictures.add(picture)
-
-        else:
-                Face.objects.get(pk=face_known).pictures.add(picture)
-
-        i += 1
+            return face_in_db(temp_file.name), img_cropped
 
 
 def face_in_db(new_face):
@@ -182,20 +197,5 @@ def face_in_db(new_face):
 
         if face_recognition.compare_faces([new_image_encoding], known_image_encoding):
             return face.pk
-
-    return False
-
-
-def recognize_user(face_upload):
-    faces = Face.objects.all()
-    upload_image = face_recognition.load_image_file(face_upload)
-    upload_image_encoding = face_recognition.face_encodings(upload_image)[0]
-
-    for face in faces:
-        known_image = face_recognition.load_image_file(face.file)
-        known_image_encoding = face_recognition.face_encodings(known_image)[0]
-
-        if face_recognition.compare_faces([upload_image_encoding], known_image_encoding):
-            return face.get_field("id")
 
     return False

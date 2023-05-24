@@ -8,12 +8,11 @@
         style="text-align: center"
     >
         <h2>Hi dear User!</h2>
-        <p>Please upload a photo of your face!</p>
+        <p>Please upload a selfie with nothing but your face!</p>
 
         <form action="" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            {% bootstrap_form form %}
-
+            <input type="file" name="image">
             <button type="submit" class="btn btn-primary">Upload</button>
         </form>
 
