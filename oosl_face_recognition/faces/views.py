@@ -1,4 +1,3 @@
-import json
 import tempfile
 
 from django.shortcuts import render, redirect
@@ -36,7 +35,6 @@ def show_pictures(request):
     context = request.session.get('context', '{}')
     request.session['context'] = None  # Zurücksetzen des Werts, um ihn nur einmal zu verwenden
     pictures = [Picture.objects.get(pk=key) for key in context]
-    messages.success(request, pictures)
     return render(request, 'faces/pictures.html', context={'images': pictures})
 
 
@@ -68,17 +66,21 @@ def upload_photo(request):
 
         messages.success(request, 'Picture Uploaded, this may take a minute')
 
-        face_known = find_rois(file)[0]
+        try:
+            face_known = find_rois(file)[0]
 
-        if not face_known:
-            messages.error(request, 'Pictures Uploaded, we have no pictures with this pretty person')
+            if not face_known:
+                messages.error(request, 'Pictures Uploaded, we have no pictures with this pretty person')
+                return HttpResponseRedirect(reverse_lazy('home'))
+            else:
+                faces = list(Face(pk=face_known).pictures.values_list('id', flat=True))
+                messages.success(request, 'Achtung sie werden weitergeleitet')
+                request.session['context'] = faces
+                return redirect('show_pictures')
+        except TypeError:
+            messages.error(request, 'Pictures Uploaded, bad picture :( Use a front face selfie, with nothing than '
+                                    'your face')
             return HttpResponseRedirect(reverse_lazy('home'))
-        else:
-            faces = list(Face(pk=face_known).pictures.values_list('id', flat=True))
-            messages.success(request, 'Achtung sie werden weitergeleitet' + str(face_known) + " " + str(faces))
-            request.session['context'] = faces
-            return redirect('show_pictures')
-
     # Wenn Seite geladen wird
     else:
         # initialiseren des Formulars mit dem Vornamen des users als photograph (siehe admin/users)
