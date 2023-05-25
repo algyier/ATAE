@@ -32,6 +32,7 @@ urlpatterns = [
 
 
     path('upload_photo/', upload_photo,  name='upload_photo'),
+    path('pictures/', show_pictures,  name='show_pictures'),
 
     path('', show_home_screen, name='home'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

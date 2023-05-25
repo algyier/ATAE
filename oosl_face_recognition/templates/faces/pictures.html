@@ -7,9 +7,9 @@
         class="home_container"
         style="text-align: center"
     >
-
     {% for img in images %}
-        <img src="{{ img.file }}" alt="img">
+        <img src="/media/{{ img.file }}" alt="img">
+        <p>{{ img.file.field }}</p>
     {% endfor %}
 
     </div>

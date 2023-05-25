@@ -1,6 +1,7 @@
+import json
 import tempfile
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from faces.forms import *
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import DeleteView
@@ -28,7 +29,15 @@ def show_home_screen(request, arg=None):
     :param arg:
     :return: render():
     """
-    return render(request, 'faces/home.html')
+    return render(request, 'faces/home.html', arg)
+
+
+def show_pictures(request):
+    context = request.session.get('context', '{}')
+    request.session['context'] = None  # Zurücksetzen des Werts, um ihn nur einmal zu verwenden
+    pictures = [Picture.objects.get(pk=key) for key in context]
+    messages.success(request, pictures)
+    return render(request, 'faces/pictures.html', context={'images': pictures})
 
 
 def navigate_to_photographer_view(request):
@@ -57,7 +66,7 @@ def upload_photo(request):
     if request.method == 'POST':
         file = request.FILES['image']
 
-        messages.success(request, 'Pictures Uploaded, this may take a minute')
+        messages.success(request, 'Picture Uploaded, this may take a minute')
 
         face_known = find_rois(file)[0]
 
@@ -65,9 +74,10 @@ def upload_photo(request):
             messages.error(request, 'Pictures Uploaded, we have no pictures with this pretty person')
             return HttpResponseRedirect(reverse_lazy('home'))
         else:
-            messages.success(request, 'gone here')
-            faces = Face(pk=face_known).pictures.all()
-            return render(request, '../templates/faces/pictures.html', {'files': faces})
+            faces = list(Face(pk=face_known).pictures.values_list('id', flat=True))
+            messages.success(request, 'Achtung sie werden weitergeleitet' + str(face_known) + " " + str(faces))
+            request.session['context'] = faces
+            return redirect('show_pictures')
 
     # Wenn Seite geladen wird
     else:
