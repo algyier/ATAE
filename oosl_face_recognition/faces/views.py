@@ -33,7 +33,7 @@ def show_home_screen(request, arg=None):
 
 def show_pictures(request):
     context = request.session.get('context', '{}')
-    request.session['context'] = None  # Zurücksetzen des Werts, um ihn nur einmal zu verwenden
+    #request.session['context'] = None  # Zurücksetzen des Werts, um ihn nur einmal zu verwenden
     pictures = [Picture.objects.get(pk=key) for key in context]
     return render(request, 'faces/pictures.html', context={'images': pictures})
 

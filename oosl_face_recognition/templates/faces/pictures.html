@@ -7,9 +7,14 @@
         class="home_container"
         style="text-align: center"
     >
-    {% for img in images %}
-        <img src="/media/{{ img.file }}" alt="img" width="30%">
-    {% endfor %}
+
+        <div class="row row-cols-3">
+            {% for img in images %}
+                <div class="col" max-width="30%">
+                    <img src="/media/{{ img.file }}" alt="img" width="90%">
+                </div>
+            {% endfor %}
+        </div>
 
     </div>
 
