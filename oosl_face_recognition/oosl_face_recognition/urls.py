@@ -34,6 +34,8 @@ urlpatterns = [
     path('upload_photo/', upload_photo,  name='upload_photo'),
     path('pictures/', show_pictures,  name='show_pictures'),
 
+    path('download-folder/', download_folder, name='download_folder'),
+
     path('', show_home_screen, name='home'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 # für statische Dateien wie Bilder.

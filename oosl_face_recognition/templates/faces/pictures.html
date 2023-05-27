@@ -7,6 +7,11 @@
         class="home_container"
         style="text-align: center"
     >
+        <form method="post" action="{% url 'download_folder' %}">
+            {% csrf_token %}
+            <input type="hidden" name="image_list" value="{{ images }}">
+            <button class="button-primary" type="submit">Download Bilder</button>
+        </form>
 
         <div class="row row-cols-3">
             {% for img in images %}

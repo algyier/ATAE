@@ -1,5 +1,7 @@
 import tempfile
+import zipfile
 
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
 from faces.forms import *
 from django.contrib.auth import authenticate, login, logout
@@ -7,7 +9,7 @@ from django.views.generic import DeleteView
 from django.contrib import messages
 
 from faces.models import *
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse_lazy
 from django.views import View
 from django.contrib import messages
@@ -19,6 +21,43 @@ import face_recognition
 from PIL import Image
 import numpy as np
 # Create your views here.
+
+
+def download_folder(request):
+
+    if request.method == 'POST':
+
+        pictures = request.POST.get('image_list').split(" ")
+
+        pdb.set_trace()
+        breakpoint()
+        # messages.success(request, pictures)
+        # return render(request, 'faces/home.html')
+        # Ordnername für das ZIP-Archiv
+        folder_name = 'virtual_folder'
+
+        # Überprüfe, ob Bilder im Ordner vorhanden sind
+        if not pictures:
+            raise PermissionDenied
+
+        # Erzeuge ein temporäres ZIP-Archiv
+        zip_filename = f"{folder_name}.zip"
+        zip_filepath = os.path.join('/tmp', zip_filename)
+        with zipfile.ZipFile(zip_filepath, 'w') as zip_file:
+            for i in range(len(pictures)):
+                file_path = os.path.join(settings.MEDIA_ROOT, 'images/pictures', pictures[i][10:-2])
+                # Füge das Bild zum ZIP-Archiv hinzu
+                zip_file.write(file_path, os.path.basename(file_path))
+
+        # Erstelle eine HTTPResponse mit dem ZIP-Archiv als Dateidownload
+        with open(zip_filepath, 'rb') as zip_file:
+            response = HttpResponse(zip_file.read(), content_type='application/zip')
+            response['Content-Disposition'] = f'attachment; filename="{zip_filename}"'
+
+        # Lösche das temporäre ZIP-Archiv
+        os.remove(zip_filepath)
+
+        return response
 
 
 def show_home_screen(request, arg=None):
