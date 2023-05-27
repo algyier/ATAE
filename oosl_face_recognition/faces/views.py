@@ -27,12 +27,10 @@ def download_folder(request):
 
     if request.method == 'POST':
 
-        pictures = request.POST.get('image_list').split(" ")
+        pictures = request.POST.get('image_list')[1:-1].split(", ")
 
-        pdb.set_trace()
-        breakpoint()
-        # messages.success(request, pictures)
-        # return render(request, 'faces/home.html')
+        # pdb.set_trace()
+        # breakpoint()
         # Ordnername für das ZIP-Archiv
         folder_name = 'virtual_folder'
 
@@ -45,7 +43,7 @@ def download_folder(request):
         zip_filepath = os.path.join('/tmp', zip_filename)
         with zipfile.ZipFile(zip_filepath, 'w') as zip_file:
             for i in range(len(pictures)):
-                file_path = os.path.join(settings.MEDIA_ROOT, 'images/pictures', pictures[i][10:-2])
+                file_path = f"{settings.MEDIA_ROOT}/images/pictures/{pictures[i][10:-1]}"
                 # Füge das Bild zum ZIP-Archiv hinzu
                 zip_file.write(file_path, os.path.basename(file_path))
 
