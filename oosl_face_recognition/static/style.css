@@ -8,12 +8,31 @@ header{
 
 .header-inside{
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: space-between;
     max-width: 1300px;
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .header-logo{
-    flex: 1;
+    display: flex;
+}
+
+.header-logo a {
+     font-weight: bold;
+    text-decoration: none;
+    color: black;
+    font-family: Helvetica, sans-serif;
+}
+
+p{
+    font-family: Helvetica, sans-serif;
+}
+
+.header-login{
+    display: flex;
 }
 
 h1{
@@ -21,14 +40,36 @@ h1{
     font-family: Helvetica, sans-serif;
 }
 
-.home_container{
+.home-container{
     text-align: center;
+    display: flex;
+    flex-direction: row;
+}
+
+.home-text-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+}
+
+.login-button {
+    font-family: Helvetica, sans-serif;
+    font-weight: bolder;
+    width: 90px;
+    height: 30px;
+    border-radius: 15px;
+    outline: none;
+    background-color: white;
+    border: 2px solid black;
 }
 
 .button_container_home{
     width: 50%;
-    margin-left: auto;
-    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .photographer_button{

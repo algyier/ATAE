@@ -6,9 +6,13 @@
 
     <link rel="stylesheet" href="../../static/style.css">
 
-    <div class="home_container">
+    <div class="home-container">
 
-        <h1>Home</h1>
+        <div class="home-text-container">
+            <h1>Welcome to Faces!</h1>
+            <p>do you want to upload new pictures or look for your face in existing ones?</p>
+        </div>
+
 
         <div class="button_container_home">
             <button onclick="window.location.href='{% url 'photographer_view' %}'" class="photographer_button">I am a Photographer</button>

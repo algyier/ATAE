@@ -19,7 +19,11 @@
                     <a href={% url "home" %}>faces</a>
                 </div>
                 <div class="header-login">
-                    <a href={% url "home" %}>faces</a>
+                    <button
+                            class="login-button"
+                            onclick="window.location.href='{% url 'home' %}'">
+                        login
+                    </button>
                 </div>
             </div>
         </header>
