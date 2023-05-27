@@ -4,25 +4,16 @@ import zipfile
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
 from django.utils.datastructures import MultiValueDictKeyError
-
-from faces.forms import *
-from django.contrib.auth import authenticate, login, logout
-from django.views.generic import DeleteView
-from django.contrib import messages
-
 from faces.models import *
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse_lazy
-from django.views import View
 from django.contrib import messages
-import pdb
 import cv2
 import os
 from django.conf import settings
 import face_recognition
 from PIL import Image
 import numpy as np
-# Create your views here.
 
 
 def download_folder(request):
@@ -70,7 +61,6 @@ def show_home_screen(request, arg=None):
 
 def show_pictures(request):
     context = request.session.get('context', '{}')
-    # request.session['context'] = None  # Zurücksetzen des Werts, um ihn nur einmal zu verwenden
     pictures = [Picture.objects.get(pk=key) for key in context]
     return render(request, 'faces/pictures.html', context={'images': pictures})
 
@@ -153,7 +143,7 @@ def upload_photos(request):
 
     # Wenn Seite geladen wird
     else:
-        # initialiseren des Formulars mit dem Vornamen des users als photograph (siehe admin/users)
+        # initialisieren des Formulars mit dem Vornamen des users als photograph (siehe admin/users)
         # ich glaube das braucht man gar nicht, aber lass mal lieber
         return render(request, '../templates/faces/upload_photos.html', {})
 
@@ -219,11 +209,6 @@ def find_rois(picture):
     img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = cascade.detectMultiScale(img_grey, scaleFactor=1.1, minNeighbors=3, minSize=(40, 40))
 
-    # das hier war nur zum debuggen, ich lass es mal hier, falls man es nochmal braucht xd
-    # pdb.set_trace()
-    # breakpoint()
-    # könnte man eig. rausnehmen
-
     arr = []
 
     for x, y, width, height in faces:
@@ -266,4 +251,3 @@ def face_in_db(new_face):
         return False
     except IndexError:
         return False
-
