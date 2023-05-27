@@ -3,6 +3,8 @@ import zipfile
 
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
+from django.utils.datastructures import MultiValueDictKeyError
+
 from faces.forms import *
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import DeleteView
@@ -97,11 +99,11 @@ def upload_photo(request):
 
     # Wenn Formular abgeschickt wird
     if request.method == 'POST':
-        file = request.FILES['image']
-
-        messages.success(request, 'Picture Uploaded, this may take a minute')
-
         try:
+            file = request.FILES['image']
+
+            messages.success(request, 'Picture Uploaded, this may take a minute')
+
             face_known = find_rois(file)[0][0]
 
             if not face_known:
@@ -114,6 +116,9 @@ def upload_photo(request):
         except TypeError:
             messages.error(request, 'Pictures Uploaded, bad picture :( Use a front face selfie, with nothing than '
                                     'your face')
+            return HttpResponseRedirect(reverse_lazy('home'))
+        except MultiValueDictKeyError:
+            messages.error(request, 'Please upload a picture')
             return HttpResponseRedirect(reverse_lazy('home'))
     # Wenn Seite geladen wird
     else:
