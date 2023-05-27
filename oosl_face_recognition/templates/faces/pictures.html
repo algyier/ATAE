@@ -4,13 +4,13 @@
 {% block content %}
 
     <div
-        class="home_container"
+        class="home-container"
         style="text-align: center"
     >
         <form method="post" action="{% url 'download_folder' %}">
             {% csrf_token %}
             <input type="hidden" name="image_list" value="{{ images }}">
-            <button class="button-primary" type="submit">Download</button>
+            <button class="button-primary button-margin-bottom" type="submit">Download</button>
         </form>
 
         <div class="row row-cols-3">
@@ -30,6 +30,11 @@
         grid-gap: 10px;
         padding-left: 20px;
         padding-right: 20px;
+        margin-top: 30px
+    }
+    .button-margin-bottom{
+        margin-bottom: 20px;
+        margin-right: 0;
     }
     </style>
 
