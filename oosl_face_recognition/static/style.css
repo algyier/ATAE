@@ -275,7 +275,7 @@ input[type=file]{
     font-size: 18px;
 }
 
-.alert-warning {
+.alert-warning, .alert-danger {
     background-color: #EF233C;
     box-shadow: 0 5px 10px 3px #EF233C30;
 }

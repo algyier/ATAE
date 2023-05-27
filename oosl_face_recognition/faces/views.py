@@ -74,7 +74,6 @@ def upload_photo(request):
                 return HttpResponseRedirect(reverse_lazy('home'))
             else:
                 faces = list(Face(pk=face_known).pictures.values_list('id', flat=True))
-                messages.success(request, 'Achtung sie werden weitergeleitet')
                 request.session['context'] = faces
                 return redirect('show_pictures')
         except TypeError:
