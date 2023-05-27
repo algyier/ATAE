@@ -174,7 +174,7 @@ def find_rois(picture):
         img = Image.open(picture.file)
         img = np.array(img)
     img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = cascade.detectMultiScale(img_grey)
+    faces = cascade.detectMultiScale(img_grey, scaleFactor=1.1, minNeighbors=3, minSize=(40, 40))
 
     # das hier war nur zum debuggen, ich lass es mal hier, falls man es nochmal braucht xd
     # pdb.set_trace()
