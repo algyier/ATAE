@@ -1,0 +1,40 @@
+header{
+    display: flex;
+    postion: relative;
+    align-items: center;
+    height: 50px;
+    background-color: antiquewhite;
+}
+
+.header-inside{
+    display: flex;
+    align-items: flex-start;
+    max-width: 1300px;
+}
+
+.header-logo{
+    flex: 1;
+}
+
+h1{
+    color: green;
+    font-family: Helvetica, sans-serif;
+}
+
+.home_container{
+    text-align: center;
+}
+
+.button_container_home{
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.photographer_button{
+
+}
+
+body {
+    margin: 0;
+}

@@ -52,7 +52,7 @@ def navigate_to_photographer_view(request):
 
 def upload_photo(request):
     """
-    Diese Funktion arbeitet mit der in request.FILES übergebenen Bilder von einer PictureForm (siehe forms.py).
+    Diese Funktion arbeitet mit der in request.FILES übergebenen Bilder von einer ManyPictureForm (siehe forms.py).
     Jeder übergebene file wird als Picture (siehe models.py) abgespeichert.
     (Der Pfad des Bilds in der DB, das Bild selbst lokal in media/images/faces).
     Danach wird das Picture an die Methode recognize_faces() übergeben um die Gesichter aus dem Bild auszulesen

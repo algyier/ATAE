@@ -3,15 +3,26 @@
 <!DOCTYPE html>
 <html lang="en">
         <head>
+            <link rel="stylesheet" href="../../static/style.css">
             <meta charset="UTF-8">
             <title>{{ view.page_title }}</title>
 
-            {% bootstrap_css %}
-            {% bootstrap_javascript jquery='full' %}
+{#            {% bootstrap_css %}#}
 
+
+            {% bootstrap_javascript jquery='full' %}
         </head>
         <body>
-
+        <header>
+            <div class="header-inside">
+                <div class="header-logo">
+                    <a href={% url "home" %}>faces</a>
+                </div>
+                <div class="header-login">
+                    <a href={% url "home" %}>faces</a>
+                </div>
+            </div>
+        </header>
         {% bootstrap_messages %}
 
         <h2>{{ page_title }}</h2>
