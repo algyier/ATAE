@@ -29,10 +29,8 @@ def download_folder(request):
 
         pictures = request.POST.get('image_list')[1:-1].split(", ")
 
-        # pdb.set_trace()
-        # breakpoint()
         # Ordnername für das ZIP-Archiv
-        folder_name = 'virtual_folder'
+        folder_name = 'Event_Download'
 
         # Überprüfe, ob Bilder im Ordner vorhanden sind
         if not pictures:
