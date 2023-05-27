@@ -33,7 +33,7 @@ def show_home_screen(request, arg=None):
 
 def show_pictures(request):
     context = request.session.get('context', '{}')
-    #request.session['context'] = None  # Zurücksetzen des Werts, um ihn nur einmal zu verwenden
+    # request.session['context'] = None  # Zurücksetzen des Werts, um ihn nur einmal zu verwenden
     pictures = [Picture.objects.get(pk=key) for key in context]
     return render(request, 'faces/pictures.html', context={'images': pictures})
 
@@ -67,7 +67,7 @@ def upload_photo(request):
         messages.success(request, 'Picture Uploaded, this may take a minute')
 
         try:
-            face_known = find_rois(file)[0]
+            face_known = find_rois(file)[0][0]
 
             if not face_known:
                 messages.error(request, 'Pictures Uploaded, we have no pictures with this pretty person')
@@ -83,7 +83,7 @@ def upload_photo(request):
             return HttpResponseRedirect(reverse_lazy('home'))
     # Wenn Seite geladen wird
     else:
-        # initialiseren des Formulars mit dem Vornamen des users als photograph (siehe admin/users)
+        # initialisieren des Formulars mit dem Vornamen des users als photograph (siehe admin/users)
         # ich glaube das braucht man gar nicht, aber lass mal lieber
         return render(request, '../templates/faces/upload_photo.html', {})
 
@@ -130,35 +130,39 @@ def recognize_faces(picture):
     # Laufvariable zu Benennung der Datei
     i = 1
 
-    face_known, img_cropped = find_rois(picture)
+    rois = find_rois(picture)
 
-    # hier müssen jetzt faces verglichen werden
-    if not face_known:
+    for i in range(len(rois)):
 
-        # Namen für neuen file aus dem namen des Ursprungsbildes und der Nummer des Gesichts
-        file_name = str(picture.file).split('/')[-1].split('.')[0]+'_face_'+str(i)+'.png'
+        face_known, img_cropped = rois[i]
 
-        # absoluter path um die Datei lokal an die richtige Stelle zu schreiben
-        path_absolute = os.path.join(settings.MEDIA_ROOT, 'images/faces', file_name)
+        # hier müssen jetzt faces verglichen werden
+        if not face_known:
 
-        # einfacher path, der in der db gespeichert wird, mit dem man den file wieder finden kann
-        path = f'images/faces/{file_name}'
+            # Namen für neuen file aus dem namen des Ursprungsbildes und der Nummer des Gesichts
+            file_name = str(picture.file).split('/')[-1].split('.')[0]+'_face_'+str(i)+'.png'
 
-        # Bild am absoluten Pfad lokal speichern
-        cv2.imwrite(path_absolute, img_cropped)
+            # absoluter path um die Datei lokal an die richtige Stelle zu schreiben
+            path_absolute = os.path.join(settings.MEDIA_ROOT, 'images/faces', file_name)
 
-        # initialisieren eines neuen Gesichts
-        face = Face()
+            # einfacher path, der in der db gespeichert wird, mit dem man den file wieder finden kann
+            path = f'images/faces/{file_name}'
 
-        # Attribute des Gesichts speichern
-        face.file = path
-        face.save()
-        face.pictures.add(picture)
+            # Bild am absoluten Pfad lokal speichern
+            cv2.imwrite(path_absolute, img_cropped)
 
-    else:
-        Face.objects.get(pk=face_known).pictures.add(picture)
+            # initialisieren eines neuen Gesichts
+            face = Face()
 
-    i += 1
+            # Attribute des Gesichts speichern
+            face.file = path
+            face.save()
+            face.pictures.add(picture)
+
+        else:
+            Face.objects.get(pk=face_known).pictures.add(picture)
+
+        i += 1
 
 
 def find_rois(picture):
@@ -181,6 +185,8 @@ def find_rois(picture):
     # breakpoint()
     # könnte man eig. rausnehmen
 
+    arr = []
+
     for x, y, width, height in faces:
         # Bild auf die Region mit einem Gesicht zuschneiden
         # (Achtung: img_cropped ist jetzt ein np.array und kein file mehr!)
@@ -191,7 +197,9 @@ def find_rois(picture):
             # Temporäres Bild speichern
             cv2.imwrite(temp_file.name, img_cropped)
 
-            return face_in_db(temp_file.name), img_cropped
+            arr.append((face_in_db(temp_file.name), img_cropped))
+
+    return arr
 
 
 def face_in_db(new_face):
