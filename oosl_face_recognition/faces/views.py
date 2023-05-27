@@ -203,19 +203,28 @@ def find_rois(picture):
 
 
 def face_in_db(new_face):
-    # Alle Faces aus db holen und einzeln mit Bild vergleichen
+    # Alle Faces aus der Datenbank holen und einzeln mit dem Bild vergleichen
     faces = Face.objects.all()
     new_image = face_recognition.load_image_file(new_face)
     try:
-        new_image_encoding = face_recognition.face_encodings(new_image)[0]
+        new_image_encodings = face_recognition.face_encodings(new_image)
+        if len(new_image_encodings) == 0:
+            return False
+
+        for face in faces:
+            known_image = face_recognition.load_image_file(face.file.path)
+            known_image_encodings = face_recognition.face_encodings(known_image)
+
+            # Schleife über alle Gesichtsvektoren des neuen Bildes
+            for new_encoding in new_image_encodings:
+                # Schleife über alle Gesichtsvektoren des bekannten Bildes
+                for known_encoding in known_image_encodings:
+                    # Vergleiche die Ähnlichkeit der Gesichtsvektoren mit einem Schwellenwert
+                    similarity = face_recognition.face_distance([known_encoding], new_encoding)
+                    if similarity < 0.6:  # Beispiel-Schwellenwert, anpassen je nach Anwendungsfall
+                        return face.pk
+
+        return False
     except IndexError:
         return False
 
-    for face in faces:
-        known_image = face_recognition.load_image_file(face.file.path)
-        known_image_encoding = face_recognition.face_encodings(known_image)[0]
-
-        if face_recognition.compare_faces([new_image_encoding], known_image_encoding):
-            return face.pk
-
-    return False
