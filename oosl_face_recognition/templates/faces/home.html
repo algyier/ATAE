@@ -9,15 +9,17 @@
     <div class="home-container">
 
         <div class="home-text-container">
-            <h1>Welcome to Faces!</h1>
-            <p>do you want to upload new pictures or look for your face in existing ones?</p>
+            <div class="home-text-headline-container">
+                <h1>Welcome to <strong>faces.</strong></h1>
+            </div>
+            <p class="semibold-p">Embrace the Magic of AI to Reveal Your Unique Identity!</p>
+            <p class="light-p text-50">Discover Your True Self in a Sea of Images. Unleash the Power of AI to Unearth Your Unique Face! Simply Upload Your Picture and Explore a Vast Database of Images Featuring You. <br>For Photographers, Amplify Your Presence by Logging In and Adding More Captivating Shots!</p>
+
+            <button onclick="window.location.href='{% url 'upload_photo' %}'" class="button-primary">Find my Pictures</button>
+            <button onclick="window.location.href='{% url 'photographer_view' %}'" class="button-secondary">I'm a Photographer</button>
+
         </div>
 
-
-        <div class="button_container_home">
-            <button onclick="window.location.href='{% url 'photographer_view' %}'" class="photographer_button">I am a Photographer</button>
-            <button onclick="window.location.href='{% url 'upload_photo' %}'" class="btn btn-primary btn-lg btn-block">I am a Participant</button>
-        </div>
 
     </div>
 

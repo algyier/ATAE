@@ -1,7 +1,9 @@
 {% extends 'faces/base.html' %}
-{% load bootstrap4 %}
+{% load static %}
 
 {% block content %}
+
+    <link rel="stylesheet" href="../../static/style.css">
 
     {# wird nur angezeigt wenn der user angemeldet ist #}
     {% if user.is_authenticated %}
@@ -15,8 +17,8 @@
             class="button_container"
             style="width: 50%; margin-left: auto; margin-right: auto"
         >
-            <a href="{% url 'upload_photos' %}" class="btn btn-primary btn-lg btn-block">Upload Photos</a>
-            <a href="{% url 'logout' %}" class="btn btn-outline-primary btn-lg btn-block">Logout</a>
+            <button onclick="window.location.href='{% url 'upload_photos' %}'" class="button-primary">Upload Photos</button>
+            <button onclick="window.location.href='{% url 'logout' %}'" class="button-secondary">Logout</button>
         </div>
 
      </div>
@@ -33,7 +35,7 @@
             class="button_container"
             style="width: 50%; margin-left: auto; margin-right: auto"
         >
-            <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg btn-block">Login</a>
+            <button onclick="window.location.href='{% url 'login' %}'" class="button-primary">Login</button>
         </div>
 
      </div>

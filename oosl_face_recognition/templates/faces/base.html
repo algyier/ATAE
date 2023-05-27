@@ -6,24 +6,20 @@
             <link rel="stylesheet" href="../../static/style.css">
             <meta charset="UTF-8">
             <title>{{ view.page_title }}</title>
-
-{#            {% bootstrap_css %}#}
-
-
             {% bootstrap_javascript jquery='full' %}
         </head>
         <body>
         <header>
             <div class="header-inside">
                 <div class="header-logo">
-                    <a href={% url "home" %}>faces</a>
+                    <a href={% url "home" %}>faces.</a>
                 </div>
                 <div class="header-login">
-                    <button
-                            class="login-button"
-                            onclick="window.location.href='{% url 'home' %}'">
-                        login
-                    </button>
+                    {% if user.is_authenticated %}
+                        <button class="logout-button" onclick="window.location.href='{% url 'logout' %}'">Logout</button>
+                    {% else %}
+                        <button class="login-button" onclick="window.location.href='{% url 'login' %}'">Login</button>
+                    {% endif %}
                 </div>
             </div>
         </header>

@@ -1,19 +1,18 @@
 {% extends 'faces/base.html' %}
 {% load bootstrap4 %}
-
+{% load static %}
 {% block content %}
 
-    <div
-        class="container"
-        style="text-align: center"
-    >
-        <h2>Hi dear User!</h2>
-        <p>Please upload a selfie with nothing but your face!</p>
+    <link rel="stylesheet" href="../../static/style.css">
 
-        <form action="" method="POST" enctype="multipart/form-data">
+    <div class="upload-container">
+        <h2>You Are Looking Great Today!</h2>
+        <p class="light-p">Please upload a selfie with nothing but your face!</p>
+
+        <form action="" method="POST" enctype="multipart/form-data" class="upload-form">
             {% csrf_token %}
             <input type="file" name="image">
-            <button type="submit" class="btn btn-primary">Upload</button>
+            <button type="submit" class="button-primary">Upload</button>
         </form>
 
     </div>
