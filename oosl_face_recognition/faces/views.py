@@ -1,3 +1,4 @@
+import pdb
 import tempfile
 import zipfile
 
@@ -91,6 +92,11 @@ def upload_photo(request):
     if request.method == 'POST':
         try:
             file = request.FILES['image']
+            # wenn die dateiendung falsch ist, breche Vorgang ab
+            file_postfix = str(file).split('.')[-1]
+            if file_postfix not in ['png', 'jpg', 'webp', 'jpeg']:
+                messages.error(request, 'Invalid File Type. Try .png .jpg .jpeg or .webp')
+                return HttpResponseRedirect(reverse_lazy('home'))
 
             messages.success(request, 'Picture Uploaded, this may take a minute')
 
@@ -136,6 +142,11 @@ def upload_photos(request):
         files = request.FILES.getlist('images')
 
         for file in files:
+            # Wenn die Dateiendung falsch ist, überspringe das Bild
+            file_postfix = str(file).split('.')[-1]
+            if file_postfix not in ['png', 'jpg', 'webp', 'jpeg']:
+                continue
+
             # neues Bild mit daten vom User und der request initialisieren und abspeichern
             picture = Picture(photographer=request.user.first_name, file=file)
             picture.save()
