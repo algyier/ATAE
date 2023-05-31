@@ -101,7 +101,7 @@ def upload_photo(request):
             messages.success(request, 'Picture Uploaded, this may take a minute')
 
             try:
-                face_known = find_rois(file)[0][0]
+                face_known = find_rois(file, False)[0][0]
             except UnidentifiedImageError:
                 messages.error(request, 'Only Images')
                 return HttpResponseRedirect(reverse_lazy('home'))
@@ -179,7 +179,7 @@ def recognize_faces(picture):
     # Laufvariable zu Benennung der Datei
     i = 1
 
-    rois = find_rois(picture)
+    rois = find_rois(picture, True)
 
     for i in range(len(rois)):
 
@@ -214,16 +214,16 @@ def recognize_faces(picture):
         i += 1
 
 
-def find_rois(picture):
+def find_rois(picture, saved):
 
     # pfad für die cascade zur Gesichtserkennung, das könnte man noch auslagern (nicht für jedes Bild)
     haarcascade_path = os.path.join(settings.BASE_DIR, 'faces/haarcascade_frontalface_default.xml')
     cascade = cv2.CascadeClassifier(haarcascade_path)
 
     # Bild öffnen, in Graustufen konvertieren und die Bereiche mit Gesichtern extrahieren
-    try:
+    if saved:
         img = cv2.imread(picture.file.path)
-    except AttributeError:
+    else:
         img = Image.open(picture.file)
         img = np.array(img)
 
