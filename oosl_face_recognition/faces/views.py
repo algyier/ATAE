@@ -12,7 +12,7 @@ import cv2
 import os
 from django.conf import settings
 import face_recognition
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 import numpy as np
 
 
@@ -94,7 +94,11 @@ def upload_photo(request):
 
             messages.success(request, 'Picture Uploaded, this may take a minute')
 
-            face_known = find_rois(file)[0][0]
+            try:
+                face_known = find_rois(file)[0][0]
+            except UnidentifiedImageError:
+                messages.error(request, 'Only Images')
+                return HttpResponseRedirect(reverse_lazy('home'))
 
             if not face_known:
                 messages.error(request, 'Pictures Uploaded, we have no pictures with this pretty person')
@@ -137,7 +141,12 @@ def upload_photos(request):
             picture.save()
 
             # Gesichter aus dem Bild extrahieren
-            recognize_faces(picture)
+            try:
+                recognize_faces(picture)
+            except UnidentifiedImageError:
+                messages.error(request, 'Only Images')
+                return HttpResponseRedirect(reverse_lazy('home'))
+
         messages.success(request, 'Pictures Uploaded')
         return HttpResponseRedirect(reverse_lazy('home'))
 
@@ -206,6 +215,7 @@ def find_rois(picture):
     except AttributeError:
         img = Image.open(picture.file)
         img = np.array(img)
+
     img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = cascade.detectMultiScale(img_grey, scaleFactor=1.1, minNeighbors=3, minSize=(40, 40))
 
